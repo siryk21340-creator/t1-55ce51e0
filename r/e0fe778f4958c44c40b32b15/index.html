@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body>
+<title>Звіт TargetOne</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one 1120px column on near-black; brand blue carries the money metrics, green/red only judge against the account average. */
+:root {
+  --bg: #0A0B0F;
+  --surface: #111318;
+  --surface-2: #171A21;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.14);
+  --text: #F5F6F8;
+  --muted: rgba(255, 255, 255, 0.72);
+  --hint: rgba(255, 255, 255, 0.54);
+  --blue: #0170ED;
+  --blue-text: #5AA2FF;
+  --blue-soft: rgba(1, 112, 237, 0.16);
+  --good: #3DD68C;
+  --good-soft: rgba(61, 214, 140, 0.12);
+  --bad: #FF6B6B;
+  --bad-soft: rgba(255, 107, 107, 0.12);
+  --warn: #E8B478;
+  --warn-soft: rgba(232, 180, 120, 0.14);
+  --font: "Onest", "Manrope", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
+  --r-lg: 22px;
+  --r-md: 14px;
+  --r-sm: 9px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1120px; margin-inline: auto; padding-block: 0 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 56px; }
+.num { font-variant-numeric: tabular-nums; }
+.label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--hint); }
+h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 20px; }
+.sec-head p { margin: 0; color: var(--muted); max-width: 60ch; }
+
+/* top bar */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-block: 22px; border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand svg { height: 20px; width: auto; display: block; }
+.brand .sep { width: 1px; height: 20px; background: var(--line-strong); }
+.brand .client { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { font-family: var(--mono); font-size: 12px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--muted); white-space: nowrap; }
+.chip.live { color: var(--good); border-color: rgba(61, 214, 140, 0.3); }
+.chip.live::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--good); margin-right: 8px; vertical-align: 1px; }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 32px; align-items: end; padding-top: 16px; }
+.hero h1 { margin: 14px 0 0; font-size: clamp(40px, 6.2vw, 72px); line-height: 1; font-weight: 800; letter-spacing: -0.045em; }
+.hero h1 span { display: block; font-size: 0.62em; letter-spacing: -0.03em; margin-top: 6px; padding-bottom: 4px; background: linear-gradient(180deg, #9CC2FF 0%, #2C86F5 50%, #0170ED 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero .lead { margin: 22px 0 0; font-size: 17px; color: var(--muted); max-width: 52ch; text-wrap: pretty; }
+.hero .lead b { color: var(--text); font-weight: 600; }
+.money { background: radial-gradient(120% 140% at 100% 0%, rgba(1, 112, 237, 0.35) 0%, rgba(1, 112, 237, 0.06) 45%, transparent 70%), var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-lg); padding: 28px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); }
+.money .big { font-size: clamp(44px, 6vw, 64px); font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+.money .row { display: flex; gap: 16px 28px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid var(--line); }
+.money .row div { display: flex; flex-direction: column; gap: 4px; }
+.money .row strong { font-size: 22px; font-weight: 700; white-space: nowrap; }
+.money .row .label { font-family: var(--font); font-size: 12px; letter-spacing: 0; text-transform: none; }
+
+/* delta pill */
+.delta { display: inline-flex; align-items: center; gap: 4px; font-family: var(--mono); font-size: 12px; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+.delta.good { color: var(--good); background: var(--good-soft); }
+.delta.bad { color: var(--bad); background: var(--bad-soft); }
+.delta.flat { color: var(--muted); background: rgba(255, 255, 255, 0.06); }
+
+/* kpi grid */
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 20px; display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto auto; gap: 6px 12px; }
+.kpi .label { grid-column: 1 / -1; font-family: var(--font); font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--muted); }
+.kpi .v { font-size: clamp(26px, 3.2vw, 32px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+.kpi .delta { align-self: center; justify-self: end; }
+.kpi .sub { grid-column: 1 / -1; font-size: 13px; color: var(--hint); }
+.kpi svg { grid-column: 1 / -1; width: 100%; height: 36px; display: block; margin-top: 6px; }
+
+/* cards */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 24px; }
+.two { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 12px; }
+.card h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+.card .note { margin: 0 0 16px; font-size: 13px; color: var(--hint); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; }
+.tip { position: absolute; pointer-events: none; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--r-sm); padding: 8px 12px; font-size: 12px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); white-space: nowrap; opacity: 0; transition: opacity 120ms; }
+.tip b { display: block; font-family: var(--mono); font-weight: 400; color: var(--hint); margin-bottom: 4px; }
+
+/* funnel */
+.funnel { display: flex; flex-direction: column; gap: 10px; }
+.step { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 14px 16px; border-radius: var(--r-md); background: var(--surface-2); border: 1px solid var(--line); position: relative; overflow: hidden; }
+.step .bar { position: absolute; inset: 0 auto 0 0; background: var(--blue-soft); }
+.step > * { position: relative; }
+.step .n { font-size: 22px; font-weight: 700; }
+.step .t { font-size: 13px; color: var(--muted); }
+.step .conv { grid-row: 1 / 3; grid-column: 2; align-self: center; text-align: right; font-family: var(--mono); font-size: 12px; color: var(--blue-text); }
+.step .conv small { display: block; color: var(--hint); font-size: 11px; }
+
+/* creatives */
+.creatives { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 12px; }
+.cr { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 12px; position: relative; }
+.cr.first { border-color: rgba(1, 112, 237, 0.55); box-shadow: 0 0 0 1px rgba(1, 112, 237, 0.25), 0 20px 50px rgba(1, 112, 237, 0.18); }
+.thumb { width: 132px; aspect-ratio: 9 / 16; border-radius: 12px; overflow: hidden; background: var(--surface-2); position: relative; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb .noimg { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-size: 11px; color: var(--hint); text-align: center; padding: 8px; }
+.rank { position: absolute; top: 18px; left: 18px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 999px; display: grid; place-items: center; font-family: var(--mono); font-size: 12px; font-weight: 500; background: rgba(10, 11, 15, 0.82); border: 1px solid var(--line-strong); backdrop-filter: blur(6px); }
+.cr.first .rank { background: var(--blue); border-color: var(--blue); }
+.cr .body { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding-block: 4px; }
+.cr .name { font-weight: 600; font-size: 16px; line-height: 1.25; text-wrap: balance; }
+.cr .meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 6px; background: var(--blue-soft); color: var(--blue-text); }
+.tag.traffic { background: var(--warn-soft); color: var(--warn); }
+.tag.sales { background: var(--good-soft); color: var(--good); }
+.status { font-family: var(--mono); font-size: 10.5px; color: var(--hint); display: inline-flex; align-items: center; gap: 5px; }
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--hint); }
+.status.on { color: var(--good); }
+.status.on::before { background: var(--good); }
+.hero-metric { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: var(--r-sm); background: var(--blue-soft); border: 1px solid rgba(1, 112, 237, 0.3); }
+.hero-metric .label { font-family: var(--font); font-size: 12px; letter-spacing: 0; text-transform: none; color: var(--muted); }
+.hero-metric .v { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; color: var(--blue-text); }
+.mini { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.mini .label { font-family: var(--font); font-size: 11px; letter-spacing: 0; text-transform: none; color: var(--hint); }
+.mini div { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 6px 8px; min-width: 0; }
+.mini strong { display: block; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.good-t { color: var(--good); }
+.bad-t { color: var(--bad); }
+.share { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--hint); }
+.share .track { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.06); overflow: hidden; }
+.share .track i { display: block; height: 100%; background: var(--blue); border-radius: 2px; }
+.scale-note { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px; font-size: 12px; color: var(--hint); }
+
+/* attention */
+.attn { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; }
+.money-d { margin-top: 10px; }
+.kpi.main { border-color: rgba(1, 112, 237, 0.4); background: linear-gradient(180deg, rgba(1, 112, 237, 0.10), transparent 70%), var(--surface); }
+.at.traffic { border-left-color: var(--warn); }
+.at { display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: center; padding: 12px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--bad); }
+.at .thumb { width: 56px; border-radius: 8px; }
+.cr .thumb { align-self: start; }
+.cr .thumb.lo { width: 88px; aspect-ratio: 1; margin: 22px 22px 0; border-radius: 14px; }
+.cr:has(.thumb.lo) { grid-template-columns: 132px minmax(0, 1fr); }
+.at .why { font-size: 13px; color: var(--muted); }
+.at .name { font-weight: 600; }
+
+/* notes */
+.notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.nt { padding: 20px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.nt p { margin: 0; color: var(--muted); text-wrap: pretty; }
+.nt .k { align-self: flex-start; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--blue-soft); color: var(--blue-text); }
+.nt .k.warn { background: var(--warn-soft); color: var(--warn); }
+.nt .k.good { background: var(--good-soft); color: var(--good); }
+
+/* table */
+.tbox { overflow-x: auto; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 980px; }
+th { font-family: var(--mono); font-size: 10.5px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--hint); text-align: right; padding: 14px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; padding-left: 18px; }
+th button { all: unset; cursor: pointer; }
+th button:hover, th button:focus-visible { color: var(--text); }
+th button:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 3px; }
+th[aria-sort="descending"] button::after { content: " ↓"; }
+th[aria-sort="ascending"] button::after { content: " ↑"; }
+td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+td.ad { display: flex; align-items: center; gap: 12px; white-space: normal; min-width: 240px; }
+td.ad .thumb { width: 30px; border-radius: 5px; flex: none; }
+td.ad small { display: block; color: var(--hint); font-size: 11.5px; }
+tr.group td { background: var(--surface-2); text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue-text); padding-block: 12px; }
+tr.group.traffic td { color: var(--warn); }
+tr.group.sales td { color: var(--good); }
+td .dim { color: var(--hint); }
+
+/* glossary + footer */
+.gloss { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.gloss div { padding: 16px; border-radius: var(--r-md); border: 1px solid var(--line); }
+.gloss b { display: block; margin-bottom: 4px; }
+.gloss p { margin: 0; font-size: 13px; color: var(--muted); }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; color: var(--hint); }
+.foot svg { height: 16px; width: auto; opacity: 0.7; }
+.foot p { margin: 0; }
+
+@media (max-width: 860px) {
+  .hero, .two { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .notes, .gloss { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px) {
+  .kpis, .notes, .gloss { grid-template-columns: 1fr; }
+  .cr { grid-template-columns: 92px minmax(0, 1fr); }
+  .cr .thumb { width: 92px; }
+  .kpi .v { font-size: 28px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rise { animation: rise 600ms cubic-bezier(.2, .7, .2, 1) both; }
+  @keyframes rise { from { opacity: 0.35; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+
+/* budget split */
+.splitbar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 3px; }
+.splitbar i { display: block; height: 100%; }
+.splitleg { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 14px; font-size: 14px; color: var(--muted); }
+.splitleg .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; }
+.splitleg b { color: var(--text); font-weight: 600; }
+
+/* objective group sections */
+.grp { display: flex; flex-direction: column; gap: 16px; padding-top: 8px; }
+.grp-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.grp-ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; background: var(--blue-soft); border: 1px solid rgba(1, 112, 237, 0.35); }
+.grp.traffic .grp-ic { background: var(--warn-soft); border-color: rgba(232, 180, 120, 0.35); }
+.grp.sales .grp-ic { background: var(--good-soft); border-color: rgba(61, 214, 140, 0.35); }
+.grp-head h2 { color: var(--blue-text); }
+.grp.traffic .grp-head h2 { color: var(--warn); }
+.grp.sales .grp-head h2 { color: var(--good); }
+.grp-head p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.grp-meta { font-family: var(--mono); font-size: 12px; color: var(--hint); white-space: nowrap; }
+.grp.traffic .kpi.main { border-color: rgba(232, 180, 120, 0.4); background: linear-gradient(180deg, rgba(232, 180, 120, 0.08), transparent 70%), var(--surface); }
+.grp.sales .kpi.main { border-color: rgba(61, 214, 140, 0.4); background: linear-gradient(180deg, rgba(61, 214, 140, 0.08), transparent 70%), var(--surface); }
+.grp.traffic .kpi svg polyline:last-child { stroke: #E8B478; }
+.grp.sales .kpi svg polyline:last-child { stroke: #3DD68C; }
+.grp-sub { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 24px; margin-top: 12px; }
+.grp-sub h3 { margin: 0; font-size: 18px; font-weight: 600; }
+.grp-sub p { margin: 0; font-size: 13px; color: var(--hint); }
+.grp.traffic .hero-metric { background: var(--warn-soft); border-color: rgba(232, 180, 120, 0.3); }
+.grp.traffic .hero-metric .v { color: var(--warn); }
+.grp.sales .hero-metric { background: var(--good-soft); border-color: rgba(61, 214, 140, 0.3); }
+.grp.sales .hero-metric .v { color: var(--good); }
+.grp.traffic .cr.first, .grp.traffic .tc.first { border-color: rgba(232, 180, 120, 0.55); box-shadow: 0 0 0 1px rgba(232, 180, 120, 0.2); }
+.grp.traffic .first .rank { background: var(--warn); border-color: var(--warn); color: #0A0B0F; }
+
+/* compact cards (square 64px previews) */
+.tcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; }
+.tc { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); position: relative; }
+.tc .rank { top: 8px; left: 8px; min-width: 22px; height: 22px; font-size: 11px; padding: 0 6px; }
+.tc .body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tc .name { font-weight: 600; }
+.tc .hero-metric .v { font-size: 22px; }
+.thumb.sq { width: 64px; aspect-ratio: 1; border-radius: 10px; }
+.at .thumb.sq { width: 56px; }
+td.ad .thumb.sq { width: 34px; border-radius: 6px; }
+tr.paused-sep td { text-align: left; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--hint); padding-block: 8px; background: rgba(255, 255, 255, 0.02); }
+tr.off td { opacity: 0.62; }
+tr.off td.ad { opacity: 0.8; }
+@media (max-width: 640px) { .grp-head { grid-template-columns: auto minmax(0, 1fr); } .grp-meta { grid-column: 1 / -1; } .gloss { grid-template-columns: 1fr; } }
+
+/* gate, tabs, dynamics */
+.gate { min-height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: var(--muted); text-align: center; }
+.gate-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 0 rgba(1, 112, 237, .6); }
+.gate.err .gate-dot { background: var(--bad); }
+.gate p { margin: 0; max-width: 40ch; }
+@media (prefers-reduced-motion: no-preference) { .gate:not(.err) .gate-dot { animation: pulse 1.4s infinite; } @keyframes pulse { to { box-shadow: 0 0 0 18px rgba(1, 112, 237, 0); } } }
+.tabs { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-bottom: -24px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; padding-block: 12px; background: rgba(10, 11, 15, .88); backdrop-filter: blur(10px); }
+.tabbtns { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.tabbtns button { all: unset; cursor: pointer; padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--muted); }
+.tabbtns button[aria-selected="true"] { background: var(--blue); color: #fff; }
+.tabbtns button:focus-visible { outline: 2px solid var(--blue-text); outline-offset: 2px; }
+.wsel { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--hint); }
+.wsel select { font: inherit; font-family: var(--mono); font-size: 13px; color: var(--text); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; padding: 8px 12px; }
+.tabc { display: flex; flex-direction: column; gap: 56px; }
+.tabc[hidden] { display: none; }
+#dynTbl { min-width: 760px; }
+#dynTbl td small { display: block; font-size: 11px; color: var(--hint); }
+#dynTbl td small.good-t { color: var(--good); }
+#dynTbl td small.bad-t { color: var(--bad); }
+#dynTbl td.wk { font-family: var(--mono); font-size: 13px; }
+tr.dynrow { cursor: pointer; }
+tr.dynrow:hover td, tr.dynrow:focus-visible td { background: rgba(1, 112, 237, .08); }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><svg role="img" aria-label="TargetOne" width="3215" height="526" viewBox="0 0 3215 526" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M76.7143 0V76.3797H0V152.437H76.7143V304.874C76.7143 362.508 99.7096 417.78 140.641 458.533C181.573 499.286 237.088 522.181 294.975 522.182H396.977V446.124H294.975C257.349 446.124 221.264 431.242 194.658 404.753C168.052 378.263 153.105 342.336 153.105 304.874V152.437H396.977V76.3797H153.105V0H76.7143Z" fill="white"/>
+<path d="M296.738 194.499C241.378 194.499 196.499 239.181 196.499 294.3C196.499 349.418 241.378 394.1 296.738 394.101C352.098 394.101 396.977 349.418 396.977 294.3C396.977 239.181 352.098 194.499 296.738 194.499ZM296.738 257.933C316.911 257.933 333.264 274.215 333.265 294.3C333.264 314.385 316.911 330.666 296.738 330.666C276.565 330.666 260.212 314.384 260.212 294.3C260.212 274.215 276.565 257.933 296.738 257.933Z" fill="#0170ED"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M1106.49 75.8692C1194.33 75.87 1265.36 146.593 1265.36 234.051C1265.36 299.04 1225.28 355.533 1168.74 379.545L1192.71 432.345L1192.72 432.382L1192.74 432.422C1198.91 446.381 1205.62 450.184 1209.61 450.184H1259.47V518.994L1210.82 525.913L1210.22 526H1209.61C1174.04 526 1142.35 504.914 1125.21 468.264L1097.99 410.541L1097.9 410.31C1092.61 397.157 1085.36 392.599 1080.75 392.23H980.152V524.239H904.003V75.8692H1106.49ZM980.152 319.351H1106.49C1149.74 319.35 1189.21 278.328 1189.21 234.051C1189.21 189.187 1150.33 148.753 1106.49 148.752H980.152V319.351Z" fill="white"/>
+<path d="M1529.92 73.525C1583.35 73.5252 1633.25 86.8616 1681.8 117.069L1685.85 119.587V203.902H1618.23L1610.66 163.684C1587.71 153.465 1560.46 149.338 1529.92 149.338C1452.51 149.338 1373.53 210.841 1373.53 299.761C1373.53 388.681 1452.51 450.184 1529.92 450.184C1569.82 450.184 1605.03 435.689 1632.09 413.15V328.868H1490.66V258.919H1708.24V444.441L1706.03 446.885C1662.67 494.919 1599.11 526 1529.92 526C1405.24 526 1297.38 425.047 1297.38 299.761C1297.38 174.475 1405.24 73.525 1529.92 73.525Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M871.26 524.239H794.351L758.998 406.312H559.689L524.333 524.239H447.424L582.221 75.8692H736.466L871.26 524.239ZM580.751 336.363H737.932L680.629 145.818H638.055L580.751 336.363Z" fill="white"/>
+<path d="M2091.55 139.951H1838.16V261.853H2044.41V325.935H1838.16V457.223H2109.23V524.239H1762.01V75.8692H2091.55V139.951Z" fill="white"/>
+<path d="M2521.37 145.818H2368.16V524.239H2292.01V145.818H2138.81V75.8692H2521.37V145.818Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M2649.61 264.729C2721.99 264.729 2784.28 323.065 2784.28 395.037C2784.28 467.344 2721.99 525.685 2649.61 525.685C2577.56 525.685 2515.28 467.339 2515.28 395.037C2515.28 323.071 2577.56 264.73 2649.61 264.729ZM2649.61 305.879C2596.43 305.879 2556.61 349.927 2556.61 395.037C2556.61 448.03 2603.64 484.535 2649.61 484.536C2703.46 484.536 2742.95 440.162 2742.95 395.037C2742.95 341.089 2694.63 305.879 2649.61 305.879Z" fill="#0170ED"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M3118.22 324.739C3171.88 324.739 3215 368.209 3215 424.871C3215 429.075 3214.65 435.08 3214.28 437.7L3213.85 440.643H3061.98C3069.23 466.624 3091.82 485.564 3118.91 485.564C3150.57 485.564 3166.58 469.211 3172.08 462.769L3174.8 459.587L3200.11 491.404L3198.4 493.537C3193.85 499.2 3169.88 525.685 3118.91 525.685C3063.26 525.685 3018.68 481.614 3018.68 424.871C3018.68 369.881 3062.53 324.74 3118.22 324.739ZM3118.22 365.889C3092.51 365.889 3071.58 380.978 3063.72 401.895H3169.67C3163.99 382.398 3143.23 365.889 3118.22 365.889Z" fill="#0170ED"/>
+<path d="M2924.17 324.739C2943.02 324.739 2960.73 331.003 2973.74 343.867C2986.78 356.753 2994.78 375.948 2994.78 401.208V524.657H2953.45V399.152C2953.45 380.522 2939.9 364.174 2919.7 364.174C2897.23 364.174 2877 375.133 2854.26 392.937V524.657H2812.93V325.767H2846.78L2851.81 352.36C2861.92 345.234 2873.53 338.787 2885.22 333.922C2898.62 328.341 2912.35 324.739 2924.17 324.739Z" fill="#0170ED"/>
+</svg><span class="sep"></span><span class="client" id="clientName"></span></div>
+    <div class="chips"><span class="chip num" id="periodChip"></span><span class="chip live" id="updChip"></span></div>
+  </header>
+
+  <div class="gate" id="gate"><div class="gate-dot"></div><p id="gateText">Розшифровуємо звіт…</p></div>
+
+  <nav class="tabs" id="tabs" hidden>
+    <div class="tabbtns" role="tablist">
+      <button type="button" role="tab" id="tabBtnWeek" aria-selected="true" data-tab="week">Звіт за тиждень</button>
+      <button type="button" role="tab" id="tabBtnDyn" aria-selected="false" data-tab="dyn">Динаміка по тижнях</button>
+    </div>
+    <label class="wsel" for="weekSel">Тиждень <select id="weekSel"></select></label>
+  </nav>
+
+  <div id="tabDyn" class="tabc" hidden>
+    <section>
+      <div class="sec-head"><h2>Динаміка по тижнях</h2><p id="dynNote"></p></div>
+      <div class="card"><div class="legend" id="dynLegend"></div><div class="chart" id="dynChart"><div class="tip" id="dynTip"></div></div></div>
+    </section>
+    <section>
+      <div class="tbox"><table id="dynTbl"><thead><tr id="dynHead"></tr></thead><tbody id="dynBody"></tbody></table></div>
+    </section>
+  </div>
+
+  <div id="tabWeek" class="tabc" hidden>
+  <section class="hero rise">
+    <div>
+      <div class="label" id="eyebrow"></div>
+      <h1 id="h1"></h1>
+      <p class="lead" id="lead"></p>
+    </div>
+    <div class="money">
+      <div class="label" id="moneyLabel"></div>
+      <div><div class="big num" id="moneyBig"></div><div class="money-d" id="moneyDelta"></div></div>
+      <div class="row num" id="moneyRow"></div>
+    </div>
+  </section>
+
+  <section class="split" id="splitSec">
+    <div class="sec-head"><h2>Куди пішов бюджет</h2><p id="splitNote"></p></div>
+    <div class="splitbar" id="splitBar"></div>
+    <div class="splitleg" id="splitLeg"></div>
+  </section>
+
+  <section class="two">
+    <div class="card">
+      <h3 id="chartTitle"></h3>
+      <p class="note">Два останні тижні. Наведіть на день, щоб побачити деталі.</p>
+      <div class="legend" id="legend"></div>
+      <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+    </div>
+    <div class="card">
+      <h3>Шлях клієнта</h3>
+      <p class="note">Від показу реклами до результату за цей тиждень</p>
+      <div class="funnel" id="funnel"></div>
+    </div>
+  </section>
+
+  <div id="groups"></div>
+
+  <section id="attnSec">
+    <div class="sec-head"><h2>Потребують уваги</h2><p>Креативи, які витрачають бюджет гірше за середнє у своїй групі кампаній.</p></div>
+    <div class="attn" id="attn"></div>
+  </section>
+
+  <section id="notesSec">
+    <div class="sec-head"><h2>Висновки і план на тиждень</h2><p>Коментар команди TargetOne</p></div>
+    <div class="notes" id="notes"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Усі оголошення</h2><p id="tableNote"></p></div>
+    <div class="tbox"><table id="tbl"><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Що означають показники</h2></div>
+    <div class="gloss" id="gloss"></div>
+  </section>
+  </div>
+
+  <footer class="foot">
+    <svg role="img" aria-label="TargetOne" width="3215" height="526" viewBox="0 0 3215 526" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M76.7143 0V76.3797H0V152.437H76.7143V304.874C76.7143 362.508 99.7096 417.78 140.641 458.533C181.573 499.286 237.088 522.181 294.975 522.182H396.977V446.124H294.975C257.349 446.124 221.264 431.242 194.658 404.753C168.052 378.263 153.105 342.336 153.105 304.874V152.437H396.977V76.3797H153.105V0H76.7143Z" fill="white"/>
+<path d="M296.738 194.499C241.378 194.499 196.499 239.181 196.499 294.3C196.499 349.418 241.378 394.1 296.738 394.101C352.098 394.101 396.977 349.418 396.977 294.3C396.977 239.181 352.098 194.499 296.738 194.499ZM296.738 257.933C316.911 257.933 333.264 274.215 333.265 294.3C333.264 314.385 316.911 330.666 296.738 330.666C276.565 330.666 260.212 314.384 260.212 294.3C260.212 274.215 276.565 257.933 296.738 257.933Z" fill="#0170ED"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M1106.49 75.8692C1194.33 75.87 1265.36 146.593 1265.36 234.051C1265.36 299.04 1225.28 355.533 1168.74 379.545L1192.71 432.345L1192.72 432.382L1192.74 432.422C1198.91 446.381 1205.62 450.184 1209.61 450.184H1259.47V518.994L1210.82 525.913L1210.22 526H1209.61C1174.04 526 1142.35 504.914 1125.21 468.264L1097.99 410.541L1097.9 410.31C1092.61 397.157 1085.36 392.599 1080.75 392.23H980.152V524.239H904.003V75.8692H1106.49ZM980.152 319.351H1106.49C1149.74 319.35 1189.21 278.328 1189.21 234.051C1189.21 189.187 1150.33 148.753 1106.49 148.752H980.152V319.351Z" fill="white"/>
+<path d="M1529.92 73.525C1583.35 73.5252 1633.25 86.8616 1681.8 117.069L1685.85 119.587V203.902H1618.23L1610.66 163.684C1587.71 153.465 1560.46 149.338 1529.92 149.338C1452.51 149.338 1373.53 210.841 1373.53 299.761C1373.53 388.681 1452.51 450.184 1529.92 450.184C1569.82 450.184 1605.03 435.689 1632.09 413.15V328.868H1490.66V258.919H1708.24V444.441L1706.03 446.885C1662.67 494.919 1599.11 526 1529.92 526C1405.24 526 1297.38 425.047 1297.38 299.761C1297.38 174.475 1405.24 73.525 1529.92 73.525Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M871.26 524.239H794.351L758.998 406.312H559.689L524.333 524.239H447.424L582.221 75.8692H736.466L871.26 524.239ZM580.751 336.363H737.932L680.629 145.818H638.055L580.751 336.363Z" fill="white"/>
+<path d="M2091.55 139.951H1838.16V261.853H2044.41V325.935H1838.16V457.223H2109.23V524.239H1762.01V75.8692H2091.55V139.951Z" fill="white"/>
+<path d="M2521.37 145.818H2368.16V524.239H2292.01V145.818H2138.81V75.8692H2521.37V145.818Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M2649.61 264.729C2721.99 264.729 2784.28 323.065 2784.28 395.037C2784.28 467.344 2721.99 525.685 2649.61 525.685C2577.56 525.685 2515.28 467.339 2515.28 395.037C2515.28 323.071 2577.56 264.73 2649.61 264.729ZM2649.61 305.879C2596.43 305.879 2556.61 349.927 2556.61 395.037C2556.61 448.03 2603.64 484.535 2649.61 484.536C2703.46 484.536 2742.95 440.162 2742.95 395.037C2742.95 341.089 2694.63 305.879 2649.61 305.879Z" fill="#0170ED"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M3118.22 324.739C3171.88 324.739 3215 368.209 3215 424.871C3215 429.075 3214.65 435.08 3214.28 437.7L3213.85 440.643H3061.98C3069.23 466.624 3091.82 485.564 3118.91 485.564C3150.57 485.564 3166.58 469.211 3172.08 462.769L3174.8 459.587L3200.11 491.404L3198.4 493.537C3193.85 499.2 3169.88 525.685 3118.91 525.685C3063.26 525.685 3018.68 481.614 3018.68 424.871C3018.68 369.881 3062.53 324.74 3118.22 324.739ZM3118.22 365.889C3092.51 365.889 3071.58 380.978 3063.72 401.895H3169.67C3163.99 382.398 3143.23 365.889 3118.22 365.889Z" fill="#0170ED"/>
+<path d="M2924.17 324.739C2943.02 324.739 2960.73 331.003 2973.74 343.867C2986.78 356.753 2994.78 375.948 2994.78 401.208V524.657H2953.45V399.152C2953.45 380.522 2939.9 364.174 2919.7 364.174C2897.23 364.174 2877 375.133 2854.26 392.937V524.657H2812.93V325.767H2846.78L2851.81 352.36C2861.92 345.234 2873.53 338.787 2885.22 333.922C2898.62 328.341 2912.35 324.739 2924.17 324.739Z" fill="#0170ED"/>
+</svg>
+    <p id="footText"></p>
+  </footer>
+</div>
+
+<script>
+window.renderReport = function (D) {
+  const $ = id => document.getElementById(id);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const usd = (v, d = 0) => v == null || !isFinite(v) ? '—' : '$' + new Intl.NumberFormat('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
+  const int = v => v == null || !isFinite(v) ? '—' : new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 0 }).format(v);
+  const pct = (v, d = 2) => v == null || !isFinite(v) ? '—' : (v * 100).toFixed(d).replace('.', ',') + '%';
+  const x2 = v => v == null || !isFinite(v) ? '—' : v.toFixed(2).replace('.', ',');
+  const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+  const dt = s => new Date(s + 'T00:00:00Z');
+  const dm = s => { const d = dt(s); return String(d.getUTCDate()).padStart(2, '0') + '.' + String(d.getUTCMonth() + 1).padStart(2, '0'); };
+  const P = D.period;
+  const rangeWords = (a, b) => { const A = dt(a), B = dt(b); return A.getUTCMonth() === B.getUTCMonth() ? `${A.getUTCDate()}–${B.getUTCDate()} ${MONTHS[B.getUTCMonth()]}` : `${A.getUTCDate()} ${MONTHS[A.getUTCMonth()]} – ${B.getUTCDate()} ${MONTHS[B.getUTCMonth()]}`; };
+  const plural = (n, one, few, many) => { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? one : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many; };
+  const sum = (rows, f) => rows.reduce((a, r) => a + Number(r[f] || 0), 0);
+  const isCur = r => r.day >= P.start && r.day <= P.end, isPrev = r => r.day >= P.prev_start && r.day <= P.prev_end;
+
+  // ---------- metrics
+  const derive = t => Object.assign(t, {
+    roas: t.spend && t.revenue ? t.revenue / t.spend : null, cpa: t.purchases ? t.spend / t.purchases : null,
+    ctr: t.impressions ? t.link_clicks / t.impressions : null, cpm_msg: t.messages ? t.spend / t.messages : null,
+    cpc: t.link_clicks ? t.spend / t.link_clicks : null, cpm: t.impressions ? t.spend / t.impressions * 1000 : null
+  });
+  const tot = rows => derive(Object.fromEntries(['spend', 'revenue', 'purchases', 'messages', 'impressions', 'link_clicks'].map(f => [f, sum(rows, f)])));
+  const C = tot(D.daily.filter(isCur)), PV = tot(D.daily.filter(isPrev));
+  const SALES = D.mode ? D.mode === 'sales' : C.revenue > 0;
+  const DG = D.daily_groups || [];
+  const GTOT = D.group_totals;
+  const zero = () => ({ spend: 0, impressions: 0, link_clicks: 0, messages: 0, purchases: 0, revenue: 0 });
+  const GT = g => GTOT
+    ? { cur: derive(Object.assign(zero(), (GTOT.cur || {})[g])), prev: derive(Object.assign(zero(), (GTOT.prev || {})[g])), days: () => null }
+    : { cur: tot(DG.filter(r => r.group === g && isCur(r))), prev: tot(DG.filter(r => r.group === g && isPrev(r))), days: d => DG.filter(r => r.group === g && r.day === d)[0] };
+  const HAS_G = !!GTOT || DG.length > 0;
+  const MSG = HAS_G ? GT('messages') : { cur: C, prev: PV };
+  const deltaEl = (c, p, dir) => {
+    const s = el('span', 'delta num');
+    if (c == null || !p) { s.classList.add('flat'); s.textContent = p ? '—' : 'новий'; return s; }
+    const v = c / p - 1;
+    s.classList.add(Math.abs(v) < 0.02 || dir === 0 ? 'flat' : dir * v > 0 ? 'good' : 'bad');
+    s.textContent = (v > 0 ? '▲ +' : v < 0 ? '▼ ' : '') + (v * 100).toFixed(1).replace('.', ',') + '%';
+    s.title = 'Порівняно з ' + rangeWords(P.prev_start, P.prev_end);
+    return s;
+  };
+
+  // ---------- groups of campaigns by objective
+  const GROUP_OF = { OUTCOME_ENGAGEMENT: 'messages', MESSAGES: 'messages', OUTCOME_SALES: 'sales', CONVERSIONS: 'sales', PRODUCT_CATALOG_SALES: 'sales', LINK_CLICKS: 'traffic', OUTCOME_TRAFFIC: 'traffic', OUTCOME_LEADS: 'leads', LEAD_GENERATION: 'leads' };
+  const GDEF = {
+    messages: { name: 'Повідомлення', icon: '💬', cls: '', about: 'Кампанії на переписки в Direct і Messenger. Головний показник: ціна переписки.' },
+    sales: { name: 'Продажі', icon: '🛒', cls: 'sales', about: 'Кампанії з оптимізацією на покупки. Головний показник: ціна покупки і ROAS.' },
+    leads: { name: 'Заявки', icon: '📝', cls: '', about: 'Кампанії на заявки. Головний показник: ціна переписки або заявки.' },
+    traffic: { name: 'Трафік', icon: '🔗', cls: 'traffic', about: 'Кампанії на переходи в профіль або на сайт. Головний показник: ціна переходу (CPC).' },
+    other: { name: 'Інше', icon: '•', cls: '', about: '' }
+  };
+  const ORDER = ['messages', 'leads', 'sales', 'traffic', 'other'];
+
+  // ---------- ads
+  const ads = D.ads.map(a => Object.assign({ messages: 0, revenue: 0, purchases: 0 }, a)).map(a => Object.assign(derive(a), {
+    freq: a.reach ? a.impressions / a.reach : null, group: GROUP_OF[a.objective] || 'other', on: a.status === 'ACTIVE'
+  }));
+  const cnt = {}, idx = {};
+  ads.forEach(a => { const k = a.name + '|' + a.group; cnt[k] = (cnt[k] || 0) + 1; });
+  ads.forEach(a => { const k = a.name + '|' + a.group; if (cnt[k] > 1) { idx[k] = (idx[k] || 0) + 1; a.label = a.name + ' · відео ' + idx[k]; } else a.label = a.name; });
+  const groupsPresent = ORDER.filter(g => ads.some(a => a.group === g));
+  const gTot = g => HAS_G ? GT(g) : { cur: tot(ads.filter(a => a.group === g)), prev: {} };
+
+  const thumb = (a, sq) => {
+    const t = el('div', 'thumb' + (sq ? ' sq' : '')); const src = D.thumbs && D.thumbs[a.creative_id];
+    if (src) { const i = el('img'); i.alt = a.name; i.onload = () => { if (i.naturalWidth < 120) t.classList.add('lo'); }; i.src = src; t.append(i); } else t.append(el('span', 'noimg', 'без превʼю'));
+    return t;
+  };
+  const statusEl = a => el('span', 'status' + (a.on ? ' on' : ''), a.on ? 'Активне' : 'На паузі');
+  const vsAvg = (v, avg, dir) => v == null || !avg ? '' : (dir * (v - avg) > 0 ? 'good-t' : 'bad-t');
+
+  // ---------- header + hero
+  $('clientName').textContent = D.client;
+  $('periodChip').textContent = dm(P.start) + ' – ' + dm(P.end) + '.' + P.end.slice(0, 4);
+  $('updChip').textContent = 'Оновлено ' + dm(D.generated);
+  $('eyebrow').textContent = 'Тижневий звіт · Meta Ads · тиждень ' + P.week;
+  $('h1').append(document.createTextNode(D.client), el('span', null, rangeWords(P.start, P.end)));
+  const lead = $('lead');
+  const say = (t, b) => lead.append(b ? el('b', null, t) : document.createTextNode(t));
+  const msgWord = n => int(n) + ' ' + plural(n, 'нову переписку', 'нові переписки', 'нових переписок');
+  const M = MSG.cur, MP = MSG.prev;
+  if (SALES) {
+    say('Реклама принесла '); say(int(C.purchases) + ' ' + plural(C.purchases, 'покупку', 'покупки', 'покупок'), 1); say(' на '); say(usd(C.revenue), 1);
+    say(' і '); say(msgWord(C.messages), 1); say(' при витратах ' + usd(C.spend) + '. Кожен вкладений долар повернув '); say(usd(C.roas, 2), 1); say('.');
+  } else {
+    say('Реклама привела '); say(msgWord(C.messages), 1); say(' при витратах ' + usd(C.spend) + '. Переписка в кампаніях на повідомлення коштувала '); say(usd(M.cpm_msg, 2), 1);
+    if (MP.cpm_msg) { const v = M.cpm_msg / MP.cpm_msg - 1; say(v <= 0 ? `, на ${Math.abs(v * 100).toFixed(0)}% дешевше, ніж тижнем раніше.` : `, на ${(v * 100).toFixed(0)}% дорожче, ніж тижнем раніше.`); } else say('.');
+  }
+  $('moneyLabel').textContent = SALES ? 'Дохід з реклами за тиждень' : 'Нових переписок за тиждень';
+  $('moneyBig').textContent = SALES ? usd(C.revenue) : int(C.messages);
+  $('moneyDelta').append(SALES ? deltaEl(C.revenue, PV.revenue, 1) : deltaEl(C.messages, PV.messages, 1));
+  const hasTraffic = groupsPresent.includes('traffic');
+  const heroRow = SALES ? [['ROAS', x2(C.roas) + '×'], ['Переписки', int(C.messages)], ['Ціна переписки', usd(M.cpm_msg, 2)]]
+    : [['Ціна переписки', usd(M.cpm_msg, 2)], ['Витрати', usd(C.spend)], hasTraffic ? ['Ціна переходу', usd(gTot('traffic').cur.cpc || 0, 3)] : ['Переходи', int(C.link_clicks)]];
+  heroRow.forEach(([l, v]) => { const d = el('div'); d.append(el('span', 'label', l), el('strong', null, v)); $('moneyRow').append(d); });
+
+  // ---------- budget split
+  (function split() {
+    if (groupsPresent.length < 2) { $('splitSec').hidden = true; return; }
+    const parts = groupsPresent.map(g => [g, gTot(g).cur.spend]).filter(p => p[1] > 0);
+    const all = parts.reduce((a, p) => a + p[1], 0);
+    const colors = { messages: 'var(--blue)', leads: '#7BB3FF', sales: 'var(--good)', traffic: 'var(--warn)', other: 'rgba(255,255,255,.3)' };
+    $('splitNote').textContent = 'Витрати за тиждень за метою кампаній. Кожна група оцінюється за своїм головним показником.';
+    parts.forEach(([g, s]) => {
+      const seg = el('i'); seg.style.width = (s / all * 100) + '%'; seg.style.background = colors[g]; seg.title = GDEF[g].name; $('splitBar').append(seg);
+      const l = el('div'); const sw = el('span', 'sw'); sw.style.background = colors[g];
+      const t = gTot(g).cur; const key = g === 'traffic' ? `${int(t.link_clicks)} переходів по ${usd(t.cpc || 0, 3)}` : g === 'sales' ? `${int(t.purchases)} покупок` + (t.cpa ? ` по ${usd(t.cpa, 2)}` : '') : `${int(t.messages)} переписок по ${usd(t.cpm_msg || 0, 2)}`;
+      l.append(sw, el('b', null, GDEF[g].name), el('span', 'num', ` ${usd(s)} · ${pct(s / all, 0)} · ${key}`));
+      $('splitLeg').append(l);
+    });
+  })();
+
+  // ---------- daily chart
+  (function chart() {
+    const box = $('chart'), tip = $('tip');
+    const days = D.daily.slice().sort((a, b) => a.day < b.day ? -1 : 1).map(r => r.day);
+    const msgDay = d => (DG.length ? GT('messages').days(d) : null) || D.daily.find(r => r.day === d);
+    const acc = d => D.daily.find(r => r.day === d);
+    const bv = d => SALES ? Number(acc(d).revenue || 0) : Number(acc(d).messages || 0);
+    const lv = d => { if (SALES) return Number(acc(d).spend); const m = msgDay(d); return m && m.messages ? m.spend / m.messages : null; };
+    const bf = SALES ? usd : int, lf = SALES ? usd : v => usd(v, 2);
+    $('chartTitle').textContent = SALES ? 'Дохід і витрати по днях' : 'Переписки і їх ціна по днях';
+    [[SALES ? 'Дохід, цей тиждень' : 'Переписки, цей тиждень', 'var(--blue)'], [SALES ? 'Дохід, минулий тиждень' : 'Переписки, минулий тиждень', 'rgba(255,255,255,.16)'], [SALES ? 'Витрати' : 'Ціна переписки (права шкала)', 'var(--warn)']]
+      .forEach(([t, c], i) => { const s = el('span'); const sw = el('i'); sw.style.background = c; if (i === 2) { sw.style.height = '3px'; sw.style.verticalAlign = '3px'; } s.append(sw, document.createTextNode(t)); $('legend').append(s); });
+    const nice = mx => { const st = Math.pow(10, Math.floor(Math.log10(mx / 4))); const s = [1, 2, 2.5, 5, 10].map(m => m * st).find(x => mx / x <= 5); const top = Math.ceil(mx / s) * s; const t = []; for (let v = 0; v <= top + 1e-9; v += s) t.push(v); return { top, t }; };
+    const lvals = days.map(lv).filter(v => v != null);
+    const B = nice(Math.max(...days.map(bv), SALES ? Math.max(...lvals) : 0) * 1.08);
+    const L = SALES ? B : nice(Math.max(...lvals) * 1.15);
+    const W = Math.max(320, box.clientWidth || 640), H = 260, mt = 12, mb = 28;
+    const ml = 10 + 7.5 * Math.max(...B.t.map(t => bf(t).length));
+    const mr = SALES ? 6 : 10 + 7.5 * Math.max(...L.t.map(t => lf(t).length));
+    const yb = v => mt + (H - mt - mb) * (1 - v / B.top), yl = v => mt + (H - mt - mb) * (1 - v / L.top);
+    const bw = (W - ml - mr) / days.length;
+    const T = (x, y, txt, anchor) => `<text x="${x}" y="${y}" dy="0.32em" text-anchor="${anchor}" font-size="11" font-family="JetBrains Mono, monospace" fill="rgba(255,255,255,.5)">${txt}</text>`;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${$('chartTitle').textContent}">`;
+    B.t.forEach(t => { s += `<line x1="${ml}" x2="${W - mr}" y1="${yb(t)}" y2="${yb(t)}" stroke="rgba(255,255,255,.07)"/>` + T(ml - 8, yb(t), bf(t), 'end'); });
+    if (!SALES) L.t.forEach(t => { s += T(W - mr + 8, yl(t), lf(t), 'start'); });
+    const every = bw < 30 ? 2 : 1;
+    days.forEach((d, i) => {
+      const bx = ml + i * bw + bw * 0.18, w = bw * 0.64;
+      s += `<rect class="b" data-i="${i}" x="${bx}" y="${yb(bv(d))}" width="${w}" height="${yb(0) - yb(bv(d))}" rx="4" fill="${d >= P.start ? '#0170ED' : 'rgba(255,255,255,.16)'}"/>`;
+      if (i % every === 0) s += `<text x="${bx + w / 2}" y="${H - 8}" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="rgba(255,255,255,.5)">${dm(d)}</text>`;
+    });
+    const sx = i => ml + i * bw + bw / 2;
+    s += `<polyline points="${days.map((d, i) => lv(d) == null ? null : sx(i) + ',' + yl(lv(d))).filter(Boolean).join(' ')}" fill="none" stroke="#E8B478" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    days.forEach((d, i) => { if (lv(d) != null) s += `<circle cx="${sx(i)}" cy="${yl(lv(d))}" r="3" fill="#E8B478"/>`; });
+    const split = ml + days.findIndex(d => d >= P.start) * bw;
+    s += `<line x1="${split}" x2="${split}" y1="${mt}" y2="${H - mb}" stroke="rgba(255,255,255,.18)" stroke-dasharray="3 4"/>`;
+    days.forEach((d, i) => { s += `<rect class="hit" data-i="${i}" x="${ml + i * bw}" y="0" width="${bw}" height="${H}" fill="transparent"/>`; });
+    box.insertAdjacentHTML('afterbegin', s + '</svg>');
+    const svg = box.querySelector('svg');
+    svg.addEventListener('pointermove', e => {
+      const t = e.target.closest('.hit'); if (!t) return;
+      const d = days[+t.dataset.i], r = acc(d), m = msgDay(d);
+      svg.querySelectorAll('rect.b').forEach(b => b.style.opacity = b.dataset.i === t.dataset.i ? 1 : 0.5);
+      tip.innerHTML = ''; tip.append(el('b', null, dm(d)));
+      if (SALES) tip.append(el('div', null, 'Дохід ' + usd(r.revenue) + ' · ROAS ' + x2(r.revenue / r.spend)), el('div', null, 'Покупки ' + r.purchases));
+      tip.append(el('div', null, 'Переписки ' + int(r.messages || 0) + (m && m.messages ? ' · по ' + usd(m.spend / m.messages, 2) : '')), el('div', null, 'Витрати ' + usd(r.spend, 2)));
+      const bb = box.getBoundingClientRect(); const px = e.clientX - bb.left;
+      tip.style.opacity = 1; tip.style.top = '0px';
+      tip.style.left = Math.max(0, Math.min(bb.width - tip.offsetWidth, px - tip.offsetWidth / 2)) + 'px';
+    });
+    svg.addEventListener('pointerleave', () => { tip.style.opacity = 0; svg.querySelectorAll('rect.b').forEach(b => b.style.opacity = 1); });
+  })();
+
+  // ---------- funnel (account)
+  (function funnel() {
+    const steps = [[C.impressions, 'Покази реклами'], [C.link_clicks, 'Переходи в профіль, Direct або на сайт', C.ctr, 'CTR'], [C.messages, 'Нові переписки', C.messages / C.link_clicks, 'від переходів']];
+    if (SALES) steps.push([C.purchases, 'Покупки', C.purchases / C.messages, 'на переписку']);
+    const lmax = Math.log10(steps[0][0]);
+    steps.forEach(([n, t, conv, cl]) => {
+      const d = el('div', 'step'); const bar = el('div', 'bar'); bar.style.width = Math.max(4, Math.log10(Math.max(n, 1)) / lmax * 100) + '%'; d.append(bar);
+      d.append(el('span', 'n num', int(n)), el('span', 't', t));
+      if (conv != null) { const c = el('span', 'conv num', pct(conv, 1)); c.append(el('small', null, cl)); d.append(c); }
+      $('funnel').append(d);
+    });
+  })();
+
+  // ---------- per-group sections
+  const daySeries = (g, k) => {
+    const rows = d => DG.length ? GT(g).days(d) : null;
+    const ds = D.daily.map(r => r.day).sort();
+    return [ds.filter(d => d >= P.start), ds.filter(d => d < P.start && d >= P.prev_start)].map(list => list.map(d => { const r = rows(d); return r ? derive(Object.assign({}, r))[k] : null; }));
+  };
+  const spark = ([a, b]) => {
+    const W = 200, H = 36, all = a.concat(b).filter(v => v != null); if (all.length < 2) return '';
+    const mx = Math.max(...all), mn = Math.min(...all), sp = (mx - mn) || 1;
+    const pts = arr => arr.map((v, i) => v == null ? null : [i * (W / (arr.length - 1)), H - 3 - (v - mn) / sp * (H - 6)]).filter(Boolean).map(p => p.map(n => n.toFixed(1)).join(',')).join(' ');
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts(b)}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/><polyline points="${pts(a)}" fill="none" stroke="#0170ED" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+  };
+  const F = { spend: v => usd(v), messages: int, cpm_msg: v => usd(v, 2), ctr: v => pct(v), link_clicks: int, cpc: v => usd(v, 3), cpm: v => usd(v, 2), impressions: int, purchases: int, cpa: v => usd(v, 2), roas: v => x2(v) + '×', revenue: v => usd(v) };
+  const KDEF = {
+    messages: SALES
+      ? [['messages', 'Нові переписки', 1], ['cpm_msg', 'Ціна переписки', -1], ['purchases', 'Покупки', 1], ['roas', 'ROAS', 1], ['spend', 'Витрати', 0], ['ctr', 'CTR', 1]]
+      : [['messages', 'Нові переписки', 1], ['cpm_msg', 'Ціна переписки', -1], ['spend', 'Витрати', 0], ['ctr', 'CTR', 1], ['link_clicks', 'Переходи', 1], ['impressions', 'Покази', 0]],
+    leads: [['messages', 'Нові переписки', 1], ['cpm_msg', 'Ціна переписки', -1], ['spend', 'Витрати', 0], ['ctr', 'CTR', 1]],
+    sales: [['purchases', 'Покупки', 1], ['cpa', 'Ціна покупки', -1], ['spend', 'Витрати', 0], ['roas', 'ROAS', 1], ['messages', 'Переписки', 1], ['ctr', 'CTR', 1]],
+    traffic: [['link_clicks', 'Переходи', 1], ['cpc', 'Ціна переходу', -1], ['spend', 'Витрати', 0], ['ctr', 'CTR', 1], ['cpm', 'Ціна 1000 показів', -1], ['impressions', 'Покази', 0]],
+    other: [['spend', 'Витрати', 0], ['impressions', 'Покази', 0], ['link_clicks', 'Переходи', 1], ['ctr', 'CTR', 1]]
+  };
+  // how creatives are ranked inside a group: [eligible, sort, hero metric, hero label, mini cells]
+  const RANK = {
+    messages: SALES
+      ? [a => a.spend >= 15 && a.roas != null, (a, b) => b.roas - a.roas, 'roas', 'ROAS', [['revenue', 'Дохід'], ['purchases', 'Покупки'], ['cpa', 'Ціна покупки', -1], ['messages', 'Переписки'], ['cpm_msg', 'Ціна переп.', -1], ['ctr', 'CTR', 1]]]
+      : [a => a.spend >= 10 && a.messages >= 3, (a, b) => a.cpm_msg - b.cpm_msg, 'cpm_msg', 'Ціна переписки', [['messages', 'Переписки'], ['spend', 'Витрати'], ['ctr', 'CTR', 1], ['link_clicks', 'Переходи'], ['impressions', 'Покази'], ['freq', 'Частота']]],
+    leads: [a => a.spend >= 10 && a.messages >= 3, (a, b) => a.cpm_msg - b.cpm_msg, 'cpm_msg', 'Ціна переписки', [['messages', 'Переписки'], ['spend', 'Витрати'], ['ctr', 'CTR', 1]]],
+    sales: [a => a.spend >= 5, (a, b) => (a.cpa ?? 1e9) - (b.cpa ?? 1e9), 'cpa', 'Ціна покупки', [['purchases', 'Покупки'], ['spend', 'Витрати'], ['roas', 'ROAS', 1], ['messages', 'Переписки'], ['ctr', 'CTR', 1], ['freq', 'Частота']]],
+    traffic: [a => a.link_clicks >= 30, (a, b) => a.cpc - b.cpc, 'cpc', 'Ціна переходу', [['link_clicks', 'Переходи'], ['spend', 'Витрати'], ['ctr', 'CTR', 1], ['impressions', 'Покази'], ['cpm', 'Ціна 1000 пок.', -1], ['freq', 'Частота']]],
+    other: [a => a.spend > 0, (a, b) => b.spend - a.spend, 'spend', 'Витрати', [['impressions', 'Покази'], ['link_clicks', 'Переходи'], ['ctr', 'CTR', 1]]]
+  };
+  F.freq = v => x2(v);
+  groupsPresent.forEach(g => {
+    const def = GDEF[g], T = gTot(g), list = ads.filter(a => a.group === g);
+    const sec = el('section', 'grp ' + def.cls);
+    const head = el('div', 'grp-head');
+    const ic = el('span', 'grp-ic', def.icon);
+    const ht = el('div'); ht.append(el('h2', null, def.name), el('p', null, def.about));
+    const meta = el('span', 'grp-meta num', `${list.length} ${plural(list.length, 'оголошення', 'оголошення', 'оголошень')} · ${list.filter(a => a.on).length} активних`);
+    head.append(ic, ht, meta); sec.append(head);
+    const kp = el('div', 'kpis');
+    KDEF[g].forEach(([k, label, dir], i) => {
+      const v = T.cur[k]; if (v == null && i > 1) return;
+      const c = el('div', 'kpi' + (i < 2 ? ' main' : ''));
+      c.append(el('span', 'label', label), el('span', 'v num', v == null ? '—' : F[k](v)), deltaEl(v, T.prev && T.prev[k], dir),
+        el('span', 'sub num', T.prev && T.prev[k] != null ? 'Минулого тижня ' + F[k](T.prev[k]) : 'Немає даних за минулий тиждень'));
+      if (DG.length) c.insertAdjacentHTML('beforeend', spark(daySeries(g, k)));
+      kp.append(c);
+    });
+    sec.append(kp);
+    const [ok, cmp, hk, hl, cells] = RANK[g];
+    const top = list.filter(ok).sort(cmp).slice(0, 6);
+    if (top.length) {
+      const sub = el('div', 'grp-sub');
+      sub.append(el('h3', null, 'Топ креативів'), el('p', null, 'Відсортовано за показником «' + hl.toLowerCase() + '». Зелений означає краще за середнє в групі, червоний гірше.'));
+      sec.append(sub);
+      const compact = g === 'traffic';
+      const wrap = el('div', compact ? 'tcards' : 'creatives');
+      top.forEach((a, i) => {
+        const c = el('article', (compact ? 'tc' : 'cr') + ' rise' + (i === 0 ? ' first' : '')); c.style.animationDelay = (i * 60) + 'ms';
+        c.append(thumb(a, compact), el('span', 'rank num', i === 0 ? '★ 1' : String(i + 1)));
+        const b = el('div', 'body');
+        const meta2 = el('div', 'meta'); meta2.append(statusEl(a));
+        const hm = el('div', 'hero-metric'); hm.append(el('span', 'label', hl), el('span', 'v num', a[hk] == null ? '—' : F[hk](a[hk])));
+        const mini = el('div', 'mini num');
+        cells.forEach(([k, l, dir]) => { const d = el('div'); d.append(el('span', 'label', l), el('strong', dir ? vsAvg(a[k], T.cur[k], dir) : '', a[k] == null || a[k] === 0 && k !== 'spend' ? '—' : F[k](a[k]))); mini.append(d); });
+        b.append(el('div', 'name', a.label), meta2, hm, mini);
+        if (!compact) { const sh = el('div', 'share'); const tr = el('div', 'track'); const ti = el('i'); ti.style.width = Math.min(100, a.spend / T.cur.spend * 100) + '%'; tr.append(ti); sh.append(el('span', 'num', 'Витрати ' + usd(a.spend) + ' · ' + pct(a.spend / T.cur.spend, 0) + ' бюджету групи'), tr); b.append(sh); }
+        c.append(b); wrap.append(c);
+      });
+      sec.append(wrap);
+    }
+    $('groups').append(sec);
+  });
+
+  // ---------- attention (rule per group)
+  const attn = [];
+  ads.forEach(a => {
+    const T = gTot(a.group).cur; let why = null;
+    if (a.group === 'traffic') { if (a.spend >= 10 && T.cpc && a.cpc > T.cpc * 1.5) why = `перехід по ${usd(a.cpc, 3)} при середньому ${usd(T.cpc, 3)}`; }
+    else if (a.group === 'sales') { if (a.spend >= 15 && !a.purchases) why = `${usd(a.spend)} витрат, жодної покупки`; }
+    else if (SALES && a.group === 'messages') { if (a.spend >= 15 && (a.roas == null || a.roas < 2)) why = a.purchases === 0 ? `${usd(a.spend)} витрат, жодної покупки` : a.revenue === 0 ? `${usd(a.spend)} витрат, ${a.purchases} пок., суму піксель не передав` : `${usd(a.spend)} витрат, повернуто ${usd(a.revenue)} (ROAS ${x2(a.roas)})`; }
+    else if (a.spend >= 10) { if (!a.messages) why = `${usd(a.spend)} витрат, жодної переписки`; else if (T.cpm_msg && a.cpm_msg > T.cpm_msg * 1.5) why = `${int(a.messages)} переп. по ${usd(a.cpm_msg, 2)} при середній ${usd(T.cpm_msg, 2)}`; }
+    if (why) attn.push([a, why]);
+  });
+  attn.sort((x, y) => (y[0].on - x[0].on) || (y[0].spend - x[0].spend)); attn.splice(6);
+  if (!attn.length) $('attnSec').hidden = true;
+  attn.forEach(([a, why]) => {
+    const d = el('div', 'at'); d.append(thumb(a, true));
+    const b = el('div'); b.append(el('div', 'name', a.label), el('div', 'why num', GDEF[a.group].name + ' · ' + why + ' · ' + (a.on ? 'активне' : 'вже на паузі')));
+    d.append(b); $('attn').append(d);
+  });
+
+  // ---------- notes
+  const tagCls = { 'Масштабувати': 'good', 'Оптимізувати': 'warn', 'Вимкнути': 'warn' };
+  if (!(D.notes || []).length) $('notesSec').hidden = true;
+  (D.notes || []).forEach(n => { const d = el('div', 'nt'); d.append(el('span', 'k ' + (tagCls[n.tag] || ''), n.tag), el('p', null, n.text)); $('notes').append(d); });
+
+  // ---------- table: grouped by objective, active first
+  const COLS = [['label', 'Креатив'], ['spend', 'Витрати'], ['impressions', 'Покази'], ['ctr', 'CTR', 1], ['link_clicks', 'Переходи'], ['cpc', 'Ціна переходу', -1], ['messages', 'Переписки'], ['cpm_msg', 'Ціна переписки', -1]]
+    .concat(SALES ? [['purchases', 'Покупки'], ['revenue', 'Дохід'], ['roas', 'ROAS', 1], ['cpa', 'Ціна покупки', -1]] : []);
+  F.spend2 = v => usd(v, 2);
+  COLS.forEach(([k, t]) => { const th = el('th'); const b = el('button', null, t); b.type = 'button'; b.dataset.k = k; th.append(b); $('thead').append(th); });
+  let sk = 'spend', sd = -1;
+  const nOn = ads.filter(a => a.on).length;
+  $('tableNote').textContent = `${ads.length} ${plural(ads.length, 'оголошення', 'оголошення', 'оголошень')} з витратами за тиждень, з них ${nOn} активних. У кожній групі спочатку активні, далі ті, що на паузі.`;
+  const render = () => {
+    const tb = $('tbody'); tb.innerHTML = '';
+    groupsPresent.forEach(g => {
+      const rows = ads.filter(a => a.group === g), T = gTot(g).cur;
+      let txt = `${GDEF[g].icon}  ${GDEF[g].name} · ${rows.length} огол. · витрати ${usd(T.spend)}`;
+      txt += g === 'traffic' ? ` · переходів ${int(T.link_clicks)} · ціна переходу ${T.cpc ? usd(T.cpc, 3) : '—'}` : g === 'sales' ? ` · покупок ${int(T.purchases)} · ціна покупки ${T.cpa ? usd(T.cpa, 2) : '—'}` : ` · переписок ${int(T.messages)} · ціна переписки ${T.cpm_msg ? usd(T.cpm_msg, 2) : '—'}`;
+      const gtr = el('tr', 'group ' + GDEF[g].cls); const gtd = el('td', null, txt); gtd.colSpan = COLS.length; gtr.append(gtd); tb.append(gtr);
+      const cmp = (a, b) => { const va = a[sk], vb = b[sk]; if (va == null) return 1; if (vb == null) return -1; return (typeof va === 'string' ? va.localeCompare(vb, 'uk') : va - vb) * sd; };
+      [rows.filter(a => a.on).sort(cmp), rows.filter(a => !a.on).sort(cmp)].forEach((part, pi) => {
+        if (!part.length) return;
+        if (pi === 1) { const s = el('tr', 'paused-sep'); const td = el('td', null, `На паузі · ${part.length}`); td.colSpan = COLS.length; s.append(td); tb.append(s); }
+        part.forEach(a => {
+          const tr = el('tr', a.on ? '' : 'off');
+          COLS.forEach(([k, , dir]) => {
+            if (k === 'label') { const td = el('td', 'ad'); td.append(thumb(a, true)); const nm = el('div'); nm.append(document.createTextNode(a.label)); const sm = el('small'); sm.append(statusEl(a)); nm.append(sm); td.append(nm); tr.append(td); return; }
+            const v = a[k]; const empty = v == null || (v === 0 && k !== 'spend');
+            tr.append(el('td', empty ? 'dim' : (dir ? vsAvg(v, T[k], dir) : ''), empty ? '—' : (k === 'spend' || k === 'revenue' ? usd(v, 2) : F[k](v))));
+          });
+          tb.append(tr);
+        });
+      });
+    });
+    document.querySelectorAll('#tbl th').forEach(th => { const k = th.querySelector('button').dataset.k; th.setAttribute('aria-sort', k === sk ? (sd > 0 ? 'ascending' : 'descending') : 'none'); });
+  };
+  $('thead').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = b.dataset.k; if (k === sk) sd = -sd; else { sk = k; sd = k === 'label' || k.startsWith('cp') ? 1 : -1; } render(); });
+  render();
+
+  // ---------- glossary
+  const G = [['Ціна переписки', 'Витрати кампаній на повідомлення, поділені на кількість нових переписок у Direct, Messenger чи WhatsApp.'],
+             ['Ціна переходу', 'Скільки коштував один перехід за рекламою. Головний показник для трафікових кампаній.'],
+             ['CTR', 'Частка людей, які побачили рекламу і перейшли в профіль, Direct або на сайт.']];
+  G.unshift(SALES ? ['ROAS', 'Скільки доларів доходу приніс кожен долар реклами. ROAS 5 означає $5 доходу на $1 витрат.'] : ['Частота', 'Скільки разів у середньому одна людина побачила рекламу за тиждень.']);
+  G.forEach(([t, d]) => { const x = el('div'); x.append(el('b', null, t), el('p', null, d)); $('gloss').append(x); });
+
+  $('footText').textContent = `Дані Meta Ads · ${D.client} · ${rangeWords(P.start, P.end)} · оновлюється щопонеділка`;
+};
+
+(function boot() {
+  const $ = id => document.getElementById(id);
+  const fail = msg => { $('gateText').textContent = msg; $('gate').classList.add('err'); };
+  const b64u = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - s.length % 4) % 4)), c => c.charCodeAt(0));
+  const keyStr = location.hash.slice(1);
+  if (!keyStr) return fail('Посилання неповне. Відкрийте його повністю, разом із частиною після знака #.');
+  let keyP;
+  try { keyP = crypto.subtle.importKey('raw', b64u(keyStr), 'AES-GCM', false, ['decrypt']); } catch (e) { return fail('Посилання пошкоджене.'); }
+  const open = async name => {
+    const r = await fetch(name, { cache: 'no-store' });
+    if (!r.ok) throw new Error('nf');
+    const buf = new Uint8Array(await r.arrayBuffer());
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, await keyP, buf.slice(12));
+    const txt = await new Response(new Blob([plain]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+    return JSON.parse(txt);
+  };
+  const usd = (v, d = 0) => v == null ? '—' : '$' + new Intl.NumberFormat('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
+  const int = v => v == null ? '—' : new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 0 }).format(v);
+  const pct = v => v == null ? '—' : (v * 100).toFixed(2).replace('.', ',') + '%';
+  const x2 = v => v == null ? '—' : v.toFixed(2).replace('.', ',') + '×';
+  const dm = s => s.slice(8, 10) + '.' + s.slice(5, 7);
+
+  function renderDyn(IDX, sales) {
+    const W = IDX.weeks.slice().sort((a, b) => a.week < b.week ? -1 : 1);
+    $('dynNote').textContent = `Підсумки кожного тижня з понеділка по неділю. Клікніть на тиждень у таблиці, щоб відкрити його повний звіт.`;
+    const cols = [['week', 'Тиждень'], ['spend', 'Витрати', usd], ['messages', 'Переписки', int], ['cpm_msg', 'Ціна переписки', v => usd(v, 2), -1], ['link_clicks', 'Переходи', int], ['cpc', 'Ціна переходу', v => usd(v, 3), -1], ['ctr', 'CTR', pct, 1]]
+      .concat(sales ? [['purchases', 'Покупки', int], ['revenue', 'Дохід', usd], ['roas', 'ROAS', x2, 1]] : []);
+    cols.forEach(([, t]) => { const th = document.createElement('th'); th.textContent = t; $('dynHead').append(th); });
+    W.slice().reverse().forEach((w, i, arr) => {
+      const tr = document.createElement('tr'); tr.className = 'dynrow'; tr.tabIndex = 0;
+      const prev = arr[i + 1];
+      cols.forEach(([k, , f, dir]) => {
+        const td = document.createElement('td');
+        if (k === 'week') { td.className = 'wk'; td.textContent = dm(w.start) + ' – ' + dm(w.end); const s = document.createElement('small'); s.textContent = 'тиждень ' + w.week.slice(-2); td.append(s); }
+        else {
+          td.textContent = f(w[k]);
+          if (prev && prev[k] && w[k] != null) { const ch = w[k] / prev[k] - 1; const s = document.createElement('small'); s.textContent = (ch > 0 ? '+' : '') + (ch * 100).toFixed(0) + '%'; if (dir) s.className = Math.abs(ch) < 0.02 ? '' : dir * ch > 0 ? 'good-t' : 'bad-t'; td.append(s); }
+        }
+        tr.append(td);
+      });
+      const go = () => { const u = new URL(location.href); u.searchParams.set('w', w.week); u.searchParams.delete('tab'); location.assign(u.href); };
+      tr.addEventListener('click', go); tr.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+      $('dynBody').append(tr);
+    });
+    // chart: main result per week (bars) + its cost (line)
+    const box = $('dynChart'), tip = $('dynTip');
+    const bk = sales ? 'revenue' : 'messages', lk = sales ? 'roas' : 'cpm_msg';
+    const bf = sales ? usd : int, lf = sales ? x2 : v => usd(v, 2);
+    [[sales ? 'Дохід за тиждень' : 'Переписки за тиждень', 'var(--blue)'], [sales ? 'ROAS (права шкала)' : 'Ціна переписки (права шкала)', 'var(--warn)']].forEach(([t, c], i) => {
+      const s = document.createElement('span'); const sw = document.createElement('i'); sw.style.background = c; if (i) { sw.style.height = '3px'; sw.style.verticalAlign = '3px'; } s.append(sw, document.createTextNode(t)); $('dynLegend').append(s);
+    });
+    const Wd = Math.max(320, box.clientWidth || 640), H = 240, mt = 12, mb = 28;
+    const nice = mx => { mx = mx || 1; const st = Math.pow(10, Math.floor(Math.log10(mx / 4))); const s = [1, 2, 2.5, 5, 10].map(m => m * st).find(x => mx / x <= 4); return Math.ceil(mx / s) * s; };
+    const bmax = nice(Math.max(...W.map(w => w[bk] || 0)) * 1.05), lv = W.map(w => w[lk]).filter(v => v != null), lmax = nice(Math.max(...lv, 0) * 1.1);
+    const ml = 56, mr = 56, bw = (Wd - ml - mr) / W.length;
+    const yb = v => mt + (H - mt - mb) * (1 - v / bmax), yl = v => mt + (H - mt - mb) * (1 - v / lmax);
+    const T = (x, y, s, a) => `<text x="${x}" y="${y}" dy="0.32em" text-anchor="${a}" font-size="11" font-family="JetBrains Mono, monospace" fill="rgba(255,255,255,.5)">${s}</text>`;
+    let s = `<svg viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Динаміка по тижнях">`;
+    [0, .25, .5, .75, 1].forEach(f => { s += `<line x1="${ml}" x2="${Wd - mr}" y1="${yb(bmax * f)}" y2="${yb(bmax * f)}" stroke="rgba(255,255,255,.07)"/>` + T(ml - 8, yb(bmax * f), bf(bmax * f), 'end') + T(Wd - mr + 8, yl(lmax * f), lf(lmax * f), 'start'); });
+    W.forEach((w, i) => {
+      const bx = ml + i * bw + bw * 0.2, ww = bw * 0.6;
+      s += `<rect class="b" data-i="${i}" x="${bx}" y="${yb(w[bk] || 0)}" width="${ww}" height="${yb(0) - yb(w[bk] || 0)}" rx="4" fill="${i === W.length - 1 ? '#0170ED' : 'rgba(1,112,237,.45)'}"/>`;
+      if (W.length <= 8 || i % 2 === W.length % 2) s += `<text x="${bx + ww / 2}" y="${H - 8}" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="rgba(255,255,255,.5)">${dm(w.start)}</text>`;
+    });
+    const pts = W.map((w, i) => w[lk] == null ? null : (ml + i * bw + bw / 2) + ',' + yl(w[lk])).filter(Boolean);
+    s += `<polyline points="${pts.join(' ')}" fill="none" stroke="#E8B478" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    W.forEach((w, i) => { if (w[lk] != null) s += `<circle cx="${ml + i * bw + bw / 2}" cy="${yl(w[lk])}" r="3.5" fill="#E8B478"/>`; });
+    W.forEach((w, i) => { s += `<rect class="hit" data-i="${i}" x="${ml + i * bw}" y="0" width="${bw}" height="${H}" fill="transparent"/>`; });
+    box.insertAdjacentHTML('afterbegin', s + '</svg>');
+    const svg = box.querySelector('svg');
+    svg.addEventListener('pointermove', e => {
+      const t = e.target.closest('.hit'); if (!t) return; const w = W[+t.dataset.i];
+      tip.innerHTML = ''; const b = document.createElement('b'); b.textContent = dm(w.start) + ' – ' + dm(w.end); tip.append(b);
+      [[sales ? 'Дохід' : 'Переписки', bf(w[bk])], [sales ? 'ROAS' : 'Ціна переписки', lf(w[lk])], ['Витрати', usd(w.spend)]].forEach(([l, v]) => { const d = document.createElement('div'); d.textContent = l + ' ' + v; tip.append(d); });
+      const bb = box.getBoundingClientRect(); tip.style.opacity = 1; tip.style.top = '0px';
+      tip.style.left = Math.max(0, Math.min(bb.width - tip.offsetWidth, e.clientX - bb.left - tip.offsetWidth / 2)) + 'px';
+    });
+    svg.addEventListener('pointerleave', () => { tip.style.opacity = 0; });
+  }
+
+  function tab(name) {
+    $('tabWeek').hidden = name !== 'week'; $('tabDyn').hidden = name !== 'dyn';
+    $('tabBtnWeek').setAttribute('aria-selected', name === 'week'); $('tabBtnDyn').setAttribute('aria-selected', name === 'dyn');
+    const u = new URL(location.href); if (name === 'dyn') u.searchParams.set('tab', 'dyn'); else u.searchParams.delete('tab'); history.replaceState(null, '', u.href);
+  }
+
+  (async () => {
+    let IDX;
+    try { IDX = await open('i.bin'); } catch (e) { return fail('Не вдалося відкрити звіт. Перевірте, що посилання скопійоване повністю.'); }
+    const params = new URLSearchParams(location.search);
+    const weeks = IDX.weeks.map(w => w.week).sort().reverse();
+    const wk = weeks.includes(params.get('w')) ? params.get('w') : weeks[0];
+    let D;
+    try { D = await open('w/' + wk + '.bin'); } catch (e) { return fail('Не вдалося завантажити дані тижня.'); }
+    document.title = IDX.client + ' · звіт TargetOne';
+    const sel = $('weekSel');
+    IDX.weeks.slice().sort((a, b) => a.week < b.week ? 1 : -1).forEach((w, i) => { const o = document.createElement('option'); o.value = w.week; o.textContent = dm(w.start) + ' – ' + dm(w.end) + '.' + w.end.slice(0, 4) + (i === 0 ? ' · останній' : ''); if (w.week === wk) o.selected = true; sel.append(o); });
+    sel.addEventListener('change', () => { const u = new URL(location.href); u.searchParams.set('w', sel.value); u.searchParams.delete('tab'); location.assign(u.href); });
+    document.querySelectorAll('#tabs [data-tab]').forEach(b => b.addEventListener('click', () => tab(b.dataset.tab)));
+    $('gate').hidden = true; $('tabs').hidden = false;
+    tab(params.get('tab') === 'dyn' ? 'dyn' : 'week');
+    window.renderReport(D);
+    renderDyn(IDX, D.mode ? D.mode === 'sales' : IDX.weeks.some(w => w.revenue > 0));
+  })();
+})();
+</script>
+
+</body></html>
